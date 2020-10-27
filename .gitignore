@@ -42,6 +42,11 @@
 *.idb
 *.pdb
 
+#Others
+*.bak
+*.txt
+src/tp1
+
 # Kernel Module Compile Results
 *.mod*
 *.cmd
