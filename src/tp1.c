@@ -87,21 +87,24 @@ main (int argc, char **argv)
           }
 
         }
+        
         break;
 
       default:
-        abort ();
+        exit(1);
       }
   }
 
-  /* Print any remaining command line arguments (not options). */
+  /* No pueden haber mas argumentos se da error */
   if (optind < argc)
   {
     //printf ("non-option ARGV-elements: ");
     while (optind < argc)
-      fprintf (stderr, "%s non-valid argument", argv[optind++]);
-    putchar ('\n');
-    exit(1)
+      fprintf (stderr, "%s non-valid argument\n", argv[optind++]);
+    
+    close(ifd);
+    close(ofd);
+    exit(1);
   }
 
   FILE *stream = fdopen(ifd, "r");
