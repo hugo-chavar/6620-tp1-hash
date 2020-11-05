@@ -116,7 +116,8 @@ main (int argc, char **argv)
     //TODO: invocar la funcion de hash
     //process_line(linebuf, linesiz);
 
-    printf("[%s]\n", linebuf);
+    //printf("[%s]\n", linebuf);
+    fwrite(linebuf, 1, strlen(linebuf), output);
     free(linebuf);
     linebuf = NULL;
   }
