@@ -3,10 +3,12 @@
 #include <getopt.h>
 #include <errno.h>
 #include <unistd.h>
-#include<sys/types.h>
-#include<sys/stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+
+#define BUFFERSIZ 256
 
 int si = 1; /* es standard input: por defecto es true */
 int so = 1; /* es standard output: por defecto es true */
@@ -19,6 +21,8 @@ int
 main (int argc, char **argv)
 {
   int c;
+  ssize_t nr;
+  char buf[BUFFERSIZ];
   ifd = fileno(stdin); /* por defecto es stdin  */
   ofd = fileno(stdout); /* por defecto es stdout */
 
@@ -90,20 +94,32 @@ main (int argc, char **argv)
       }
   }
 
-
   /* Print any remaining command line arguments (not options). */
   if (optind < argc)
   {
-    printf ("non-option ARGV-elements: ");
+    //printf ("non-option ARGV-elements: ");
     while (optind < argc)
-      printf ("%s ", argv[optind++]);
+      fprintf (stderr, "%s non-valid argument", argv[optind++]);
     putchar ('\n');
+    exit(1)
   }
 
-  if (ifd != fileno(stdin))
-    close(ifd);
-  if (ofd != fileno(stdout))
-    close(ofd);
+  FILE *stream = fdopen(ifd, "r");
+  size_t linesiz = 0;
+  char* linebuf = 0;
+  ssize_t linelen = 0;
+  while ((linelen = getline(&linebuf, &linesiz, stream) > 0))
+  {
+    //TODO: invocar la funcion de hash
+    //process_line(linebuf, linesiz);
+
+    printf("[%s]\n", linebuf);
+    free(linebuf);
+    linebuf = NULL;
+  }
+
+  close(ifd);
+  close(ofd);
 
   exit (0);
 }
