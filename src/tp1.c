@@ -13,9 +13,8 @@
 int si = 1; /* es standard input: por defecto es true */
 int so = 1; /* es standard output: por defecto es true */
 
-int ifd; /* input file descriptor */
-int ofd; /* output file descriptor */
-
+FILE *input;
+FILE *output;
 
 int
 main (int argc, char **argv)
@@ -23,8 +22,8 @@ main (int argc, char **argv)
   int c;
   ssize_t nr;
   char buf[BUFFERSIZ];
-  ifd = fileno(stdin); /* por defecto es stdin  */
-  ofd = fileno(stdout); /* por defecto es stdout */
+  input = stdin;
+  output = stdout;
 
   static struct option long_options[] =
   {
@@ -62,13 +61,14 @@ main (int argc, char **argv)
         break;
 
       case 'i':
-        /*printf ("option -i with value `%s'\n", optarg);*/
+        
         si = 0;
         if (strcmp(optarg, "-")) {
-          ifd = open(optarg, O_RDONLY|O_NONBLOCK, 0);
-          if (ifd < 0)
+          
+          input = fopen(optarg, "r");
+          if (input == NULL)
           {
-            fprintf (stderr, "Can't open file `%s` for reading\n", optarg);
+            fprintf (stderr, "Can't open file `%s` for reading. %s\n", optarg, strerror(errno));
             exit (1);
           }
 
@@ -77,12 +77,13 @@ main (int argc, char **argv)
         break;
 
       case 'o':
-        printf ("option -o with value `%s'\n", optarg);
+        
+        so = 0;
         if (strcmp(optarg, "-")) {
-          ifd = open(optarg, O_RDWR|O_CREAT, 0);
-          if (ifd < 0)
+          output = fopen(optarg, "w+");
+          if (output == NULL)
           {
-            fprintf (stderr, "Can't open file `%s` for writing\n", optarg);
+            fprintf (stderr, "Can't open file `%s` for writing. %s \n", optarg, strerror(errno));
             exit (1);
           }
 
@@ -102,16 +103,15 @@ main (int argc, char **argv)
     while (optind < argc)
       fprintf (stderr, "%s non-valid argument\n", argv[optind++]);
     
-    close(ifd);
-    close(ofd);
+    fclose(input);
+    fclose(output);
     exit(1);
   }
 
-  FILE *stream = fdopen(ifd, "r");
   size_t linesiz = 0;
   char* linebuf = 0;
   ssize_t linelen = 0;
-  while ((linelen = getline(&linebuf, &linesiz, stream) > 0))
+  while ((linelen = getline(&linebuf, &linesiz, input) > 0))
   {
     //TODO: invocar la funcion de hash
     //process_line(linebuf, linesiz);
@@ -121,8 +121,9 @@ main (int argc, char **argv)
     linebuf = NULL;
   }
 
-  close(ifd);
-  close(ofd);
+  fclose(input);
+  fclose(output);
 
   exit (0);
 }
+
