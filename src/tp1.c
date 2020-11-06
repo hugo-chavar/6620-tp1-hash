@@ -1,12 +1,14 @@
+#include <errno.h>
+#include <fcntl.h>
+#include <getopt.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
-#include <errno.h>
-#include <unistd.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
+#include <unistd.h>
+#include "hash.h"
 
 #define BUFFERSIZ 256
 
@@ -15,6 +17,57 @@ int so = 1; /* es standard output: por defecto es true */
 
 FILE *input;
 FILE *output;
+
+
+typedef struct {
+	int32_t hash;
+	char *msg;
+} regression;
+
+int32_t
+get_hash_(string_hash *sh, char *msg, size_t len, size_t stride)
+{
+	char *ptr = msg;
+	size_t delta;
+	size_t rem;
+
+	string_hash_init(sh);
+	for (rem = len; rem > 0; ) {
+		if (rem >= stride)
+			delta = stride;
+		else
+			delta = rem;
+	
+		string_hash_more(sh, ptr, delta);
+		rem -= delta;
+		ptr += delta;
+	}
+	string_hash_done(sh);
+
+	return string_hash_value(sh);
+}
+
+int
+get_hash(char *msg)
+{
+	size_t len = strlen(msg);
+	size_t stride;
+	string_hash sh;
+	int32_t h0;
+	int32_t h;
+
+	if (len > 1) {
+		h0 = get_hash_(&sh, msg, len, len);
+
+		for (stride = len; stride >= 1; stride--) {
+			h = get_hash_(&sh, msg, len, stride);
+			assert(h0 == h);
+		}
+	}
+
+	return h0;
+}
+
 
 int
 main (int argc, char **argv)
@@ -109,19 +162,23 @@ main (int argc, char **argv)
   }
 
   size_t linesiz = 0;
-  char* linebuf = 0;
+  char* linebuf = NULL;
   ssize_t linelen = 0;
+  int32_t hash;
   while ((linelen = getline(&linebuf, &linesiz, input) > 0))
   {
-    //TODO: invocar la funcion de hash
+    hash = get_hash(linebuf);
     //process_line(linebuf, linesiz);
-
+    
+    char * tempStr = (char *) malloc(strlen(linebuf)+11);
+    sprintf(tempStr, "0x%08x %s", hash, linebuf);
     //printf("[%s]\n", linebuf);
-    fwrite(linebuf, 1, strlen(linebuf), output);
-    free(linebuf);
-    linebuf = NULL;
+    fwrite(tempStr, 1, strlen(tempStr), output);
+    free(tempStr);
+    
   }
 
+  free(linebuf);
   fclose(input);
   fclose(output);
 
