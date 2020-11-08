@@ -1,7 +1,7 @@
 #include <stdint.h>
-#include <assert.h>
 
 #include "hash.h"
+#include "myassert.h"
 
 void
 string_hash_init(string_hash *h)
@@ -14,7 +14,7 @@ string_hash_init(string_hash *h)
 void
 string_hash_more(string_hash *sh, char *str, size_t len)
 {
-	assert(sh->flag == STRING_HASH_INIT || sh->flag == STRING_HASH_MORE);
+	myassert(sh->flag == STRING_HASH_INIT || sh->flag == STRING_HASH_MORE);
 
 	if (sh->flag == STRING_HASH_INIT) {
 		sh->flag = STRING_HASH_MORE;
