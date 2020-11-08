@@ -73,8 +73,6 @@ int
 main (int argc, char **argv)
 {
   int c;
-  ssize_t nr;
-  char buf[BUFFERSIZ];
   input = stdin;
   output = stdout;
 
