@@ -1,3 +1,6 @@
+#include <sys/regdef.h>
+#include <sys/syscall.h>
+
 	.text
 	.abicalls
 	.align 2
@@ -33,14 +36,14 @@ string_hash_more:
 
 resuelvo_if:
 	
-	lw t0, a0 #flag
+	lw t0, 0(a0) #flag
 	#sh->flag = STRING_HASH_MORE;
 	addiu t0, zero, 2 #flag = 2
 	sw t0, 20(fp) #lo guardo en LTA
 
 	#sh->hash = (*str) << 7;
 	addiu t0, a0, 4
-	lw t1, t0 #hash
+	lw t1, 0(t0) #hash
 	sll t1, a1, 7
 	sw t1, 16(fp) #lo guardo en LTA
 	
@@ -58,30 +61,30 @@ resuelvo_if:
 
 ### Importante2: estoy usando demasiados temporales, ya sé, capaz me pasé de los 40 reservados, podría pisar t0 y seguir desde ahí.
 	
-while: lw	t0,44(fp)	# traigo str
-	lb	t0,0(t0)	# desreferencio
-	be	t0,zero,salir
-	lw	t1,48(fp)	# traigo len	# ¿esta bien, entra len en t1?
-	be	t1,zero,salir
+while:	lw	t0, 44(fp)	# traigo str
+	lb	t0, 0(t0)	# desreferencio
+	beq	t0, zero, salir
+	lw	t1, 48(fp)	# traigo len	# ¿esta bien, entra len en t1?
+	be	t1, zero, salir
 	
 	# Se cumplen ambas condiciones, cuerpo del while:
-	lw	t2,40(fp)	# traigo sh
+	lw	t2, 40(fp)	# traigo sh
 	
-	lw	t2,1(t2)	# piso t2 con sh->hash, offset de 1 byte
-	mul	t2,t2,F4243h	# es el número decimal 1000003
+	lw	t2, 1(t2)	# piso t2 con sh->hash, offset de 1 byte
+	mul	t2, t2, 1000003
 	# y acá hay que elevar eso...
 	# completar, la cuenta es t2^*str++.
 
-	lw	t3,40(fp)	# traigo sh
-	lw	t3,5(t3)	# piso t3 con sh->size, offset de 1+4 bytes	#¿entre sieze en t3?
-	addiu	t3,t3,1
-	sw	t3, ...... #lo tengo que guardar donde estaba, pero estaba "adentro" del struct. Dónde lo guardo...?
+	lw	t3, 40(fp)	# traigo sh
+	lw	t3, 5(t3)	# piso t3 con sh->size, offset de 1+4 bytes	#¿entre sieze en t3?
+	addiu	t3, t3, 1
+	#sw	t3, ...... #lo tengo que guardar donde estaba, pero estaba "adentro" del struct. Dónde lo guardo...?
 	
 	b while
 
 salir:
 	# (esta función no devuelve nada)
-	lw	fp,28(sp)
-	addiu	sp,sp,40
+	lw	fp, 28(sp)
+	addiu	sp, sp, 40
 	jr	ra
-	.end string_hash_more:
+	.end string_hash_more
