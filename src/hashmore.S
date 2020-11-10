@@ -36,6 +36,7 @@ string_hash_more:
 
 	subu t3, t0, 1
 	beq t3, zero, resuelvo_if 
+	b while
 
 resuelvo_if:
 	
