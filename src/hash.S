@@ -16,9 +16,9 @@ string_hash_more:
 #STRING_HASH_MORE 2
 #STRING_HASH_DONE 3
 
-	#stak frame
+	#stack frame
 	subu sp, sp, 40
-	.cprestore 24
+	.cprestore 24		# sería .cprestore 40?
 	sw fp, 28(sp)
 	sw ra, 32(sp)
 	move sp, fp
@@ -35,11 +35,11 @@ resuelvo_if:
 	
 	lw t0, a0 #flag
 	#sh->flag = STRING_HASH_MORE;
-	addu t0, zero, 2 #flag = 2
+	addiu t0, zero, 2 #flag = 2
 	sw t0, 20(fp) #lo guardo en LTA
 
 	#sh->hash = (*str) << 7;
-	addu t0, a0, 4
+	addiu t0, a0, 4
 	lw t1, t0 #hash
-	srl t1, a1, 7
+	sll t1, a1, 7
 	sw t1, 16(fp) #lo guardo en LTA
