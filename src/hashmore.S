@@ -19,7 +19,7 @@ string_hash_more:
 	.cprestore 32
 	sw fp, 36(sp)
 	sw ra, 40(sp)
-	move sp, fp
+	move fp, sp
 
 	#salvo  argumento
 	sw a0, 48(fp) #sh
