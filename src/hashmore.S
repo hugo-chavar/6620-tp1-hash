@@ -24,14 +24,14 @@ string_hash_more:
 	#salvo  argumento
 	sw a0, 48(fp) #sh
 	sw a1, 52(fp) #str
-	sw a2, 56(fp) #len
+	sh a2, 56(fp) #len
 
 	#armo struct
 	lb t0, 0(a0) #flag
 	#sb t0, 16(fp) #lo guardo en LTA
 	lw t1, 4(a0) #hash
 	#sw t1, 20(fp)
-	lw t2, 8(a0) #size
+	lh t2, 8(a0) #size
 	#sw t2, 24(fp)
 
 	subu t3, t0, 1
@@ -71,14 +71,14 @@ while:
 	sw t0, 52(fp) #actualizo str
 
 	#lw	t2, 24(fp)	# traigo sh->size
-	lw t2, 8(a0) #traigo sh->size
+	lh t2, 8(a0) #traigo sh->size
 	addiu	t2, t2, 1 #size++
 	#sw t2, 24(fp)
-	sw t2, 8(a0) #actualizo sh->size
+	sh t2, 8(a0) #actualizo sh->size
 	
 	addiu t1, zero, 1 #t1 = 1
 	subu a2, a2, t1 #len--
-	sw a2, 56(fp)
+	sh a2, 56(fp)
 
 	b while
 
