@@ -46,15 +46,15 @@ resuelvo_if:
 	sb t0, 0(a0) #actualizo sh->flag
 
 	#sh->hash = (*str) << 7;
-	lw t2, 0(a1) #desreferencio str, piso valor de t3
+	lw t2, 52(fp) #desreferencio str, piso valor de t3
 	sll t1, t2, 7
-	sw t1, 0(a1) #actualizo str con *str << 7
+	sw t1, 52(fp) #actualizo str con *str << 7
 	#sw t1, 20(fp) #guardo sh->hash en LTA
 	sw t1, 4(a0) #acualizo hash
 
 while:	
 	
-	lw	t0, 0(a1)	# desreferencio str
+	lw	t0, 52(fp)	# desreferencio str
 
 	beq	t0, zero, salir
 	beq a2, zero, salir
@@ -68,7 +68,7 @@ while:
 	#sw t1, 20(fp)
 	sw t1, 4(a0) #actualizo hash
 	addiu t0, t0, 1 #str++
-	sw t0, 0(a1) #actualizo str
+	sw t0, 52(fp) #actualizo str
 
 	#lw	t2, 24(fp)	# traigo sh->size
 	lw t2, 8(a0) #traigo sh->size
