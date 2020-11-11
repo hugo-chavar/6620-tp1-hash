@@ -31,7 +31,7 @@ string_hash_more:
 	#sb t0, 16(fp) #lo guardo en LTA
 	lw t1, 4(a0) #hash
 	#sw t1, 20(fp)
-	lh t2, 8(a0) #size
+	lw t2, 8(a0) #size
 	#sw t2, 24(fp)
 
 	subu t3, t0, 1
@@ -55,7 +55,6 @@ resuelvo_if:
 while:	
 	
 	lw	t0, 52(fp)	# desreferencio str
-
 	beq	t0, zero, salir
 	beq a2, zero, salir
 	
@@ -71,14 +70,14 @@ while:
 	sw t0, 52(fp) #actualizo str
 
 	#lw	t2, 24(fp)	# traigo sh->size
-	lh t2, 8(a0) #traigo sh->size
+	lw t2, 8(a0) #traigo sh->size
 	addiu	t2, t2, 1 #size++
 	#sw t2, 24(fp)
-	sh t2, 8(a0) #actualizo sh->size
+	sw t2, 8(a0) #actualizo sh->size
 	
 	addiu t1, zero, 1 #t1 = 1
 	subu a2, a2, t1 #len--
-	sh a2, 56(fp)
+	sw a2, 56(fp)
 
 	b while
 
