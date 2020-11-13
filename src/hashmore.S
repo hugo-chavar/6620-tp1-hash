@@ -45,22 +45,22 @@ resuelvo_if:
 	lw t2, 52(fp)	#desreferencio str
 	lb t2, 0(t2)	#levanto el primer byte
 	sll t1, t2, 7
-	sw t1, 52(fp) #actualizo str con *str << 7
-	sw t1, 4(a0) #acualizo hash
+	sw t1, 4(a0) #acualizo hash directo en la memoria
 
 while:	
 	
 	lw	t0, 52(fp)	# desreferencio str
-	lb	t0, 0(t0)	#levanto el primer byte
-	beq	t0, zero, salir
+	lb	t2, 0(t0)	#levanto el primer byte
+	beq	t2, zero, salir
 	beq	a2, zero, salir
 	
 	# Se cumplen ambas condiciones,cuerpo del while:
 
 	lw t1, 4(a0) #traigo sh->hash
 	mul	t1, t1, 1000003 #(1000003 * sh->hash)
-	xor t1, t1, t0
+	xor t1, t1, t2
 	sw t1, 4(a0) #actualizo hash
+	lw t0, 52(fp)
 	addiu t0, t0, 1 #str++
 	sw t0, 52(fp) #actualizo str
 
