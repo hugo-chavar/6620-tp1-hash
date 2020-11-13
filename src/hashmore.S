@@ -31,8 +31,18 @@ string_hash_more:
 	lw	t1, 4(a0)	#hash
 	lw	t2, 8(a0)	#size
 
-	subu	t3, t0, 1
-	beq	t3, zero, resuelvo_if
+	# myassert
+	addiu	t3, zero, 1
+	addiu	t4, zero, 2
+	
+	sne	t5, t3, t0 # flag = STRING_HASH_INIT;
+	sne	t6, t4, t0 # flag = STRING_HASH_MORE;
+	or	a0, t5, t6
+	la	t9, myassert
+	jal	t9
+	
+	addiu	t3, zero, 1
+	beq	t0, t3, resuelvo_if
 	b	while
 
 resuelvo_if:
