@@ -39,6 +39,7 @@ resuelvo_if:
 	
 	#sh->flag = STRING_HASH_MORE;
 	addiu	t0, zero, 2	#sh->flag = 2
+	lw	a0, 48(fp)
 	sb	t0, 0(a0)	#actualizo sh->flag
 
 	#sh->hash = (*str) << 7;
@@ -56,6 +57,7 @@ while:
 	
 	# Se cumplen ambas condiciones,cuerpo del while:
 
+	lw	a0, 48(fp)
 	lw	t1, 4(a0)	#traigo sh->hash
 	mul	t1, t1, 1000003	#(1000003 * sh->hash)
 	xor	t1, t1, t2
