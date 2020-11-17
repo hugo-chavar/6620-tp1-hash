@@ -24,7 +24,7 @@ string_hash_more:
 	#salvo argumento
 	sw	a0, 48(fp)	#sh
 	sw	a1, 52(fp)	#str
-	sh	a2, 56(fp)	#len
+	sw	a2, 56(fp)	#len
 
 	#armo struct
 	lb	t0, 0(a0)	#flag
@@ -41,6 +41,8 @@ string_hash_more:
 	la	t9, myassert
 	jal	t9
 	
+	lw	a0, 48(fp)
+	lb	t0, 0(a0)	#flag
 	addiu	t3, zero, 1
 	beq	t0, t3, resuelvo_if
 	b	while
@@ -63,6 +65,7 @@ while:
 	lw	t0, 52(fp)	# desreferencio str
 	lb	t2, 0(t0)	#levanto el primer byte
 	beq	t2, zero, salir
+	lw	a2, 56(fp)
 	beq	a2, zero, salir
 	
 	# Se cumplen ambas condiciones,cuerpo del while:
@@ -89,6 +92,7 @@ while:
 salir:
 	# (esta función no devuelve nada)
 	lw	fp, 36(sp)
+	lw	ra, 40(sp)
 	addiu	sp, sp, 48
 	jr	ra
 	
